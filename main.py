@@ -2,8 +2,7 @@ from fastapi import FastAPI
 import groq
 import os
 from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
-from topStocks import get_top_stocks
+
 # Load API key from .env file
 
 load_dotenv(dotenv_path=".env")
@@ -17,13 +16,7 @@ if not GROQ_API_KEY:
     
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
-)
+
 
 @app.get("/ask")
 def ask(query: str):
@@ -45,9 +38,3 @@ def ask(query: str):
     
     except Exception as e:
         return {"error": str(e)}
-
-@app.get("/top-stocks")
-async def read_top_stocks():
-    top_stocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']
-    stock_info = get_top_stocks(top_stocks)
-    return stock_info

@@ -8,7 +8,8 @@ from agno.agent import Agent, RunResponse
 import os
 from dotenv import load_dotenv
 # Load API key from .env file
-
+from fastapi.middleware.cors import CORSMiddleware
+from topStocks import get_top_stocks
 load_dotenv(dotenv_path=".env")
 GROQ_API_KEY = os.getenv("api_key")
 
@@ -19,6 +20,14 @@ if not GROQ_API_KEY:
     
 app = FastAPI()
 # Web searching agent
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
+
 web_search_agent = Agent(
     name="web_agent",
     role="search the web for information based on the user given input",
@@ -65,6 +74,12 @@ multi_ai = Agent(
     model=Groq(id="llama-3.3-70b-specdec",api_key=GROQ_API_KEY),
     markdown=True,
 )
+
+@app.get("/top-stocks")
+async def read_top_stocks():
+    top_stocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']
+    stock_info = get_top_stocks(top_stocks)
+    return stock_info
 
 @app.get("/ask")
 def ask(query: str):
