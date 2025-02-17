@@ -1,17 +1,4 @@
-from fastapi import FastAPI
 import yfinance as yf
-import json
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
-)
 
 def get_top_stocks(symbols):
     stock_data = []
@@ -30,9 +17,3 @@ def get_top_stocks(symbols):
         except Exception as e:
             print(f"Error fetching {symbol}: {e}")
     return stock_data
-
-@app.get("/top-stocks")
-async def read_top_stocks():
-    top_stocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']
-    stock_info = get_top_stocks(top_stocks)
-    return stock_info
