@@ -56,7 +56,7 @@ def chat(query: str):
         return {"error": str(e)}
 
 
-@app.get("/ask")
+@app.get("/agent")
 def ask(query: str):
     """
     API endpoint to handle user investment-related questions and return AI-generated insights.
