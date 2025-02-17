@@ -1,25 +1,13 @@
-from fastapi import FastAPI
 import groq
 import os
 from dotenv import load_dotenv
 
-# Load API key from .env file
-
 load_dotenv(dotenv_path=".env")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("api_key")
 
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
-if not GROQ_API_KEY:
-    raise ValueError("Please provide a GROQ API key")
-    exit(1)
-    
-app = FastAPI()
-
-
-
-@app.get("/ask")
-def ask(query: str):
+def chat(query: str):
     """
     API endpoint to handle user investment-related questions and return AI-generated insights.
     """
