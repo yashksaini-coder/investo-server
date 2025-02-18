@@ -14,6 +14,7 @@ router.post("/register", async (req: Request, res: Response) => {
     const { errors, input } = await RequestValidator(CreateUserRequest, req.body);
     if (errors) return res.status(400).json(errors);
     const hashedPassword = await authService.hashPassword(input.password);
+  
     input.password = hashedPassword;
     const data = await userService.createUser(input);
     return res.status(201).json(data);
