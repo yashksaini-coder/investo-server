@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://user_service_db_xvpq_user:Be3Iwq9nw6qrdqvIHzjMZh6BimWMO4PB@dpg-cupua85svqrc73f5po2g-a.singapore-postgres.render.com/user_service_db_xvpq"
+  url      = env("DB_URL")
 }
 model User{
   id        Int     @id @default(autoincrement())
