@@ -8,6 +8,11 @@ export class UserService {
   }
 
   async createUser(input: any) {
+    
+    const existingUser = await this._repository.findOne(undefined, input.email);
+    if (existingUser) {
+      throw new Error("User already exists");
+    }
     const data = await this._repository.create(input);
     if (!data.id) {
       throw new Error("Not able to create user");
