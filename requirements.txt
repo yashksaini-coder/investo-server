@@ -29,8 +29,8 @@ markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
 multitasking==0.0.11
-numpy==2.2.3
-pandas==2.2.3
+numpy>=1.22.4
+pandas>=2.2.3
 peewee==3.17.9
 platformdirs==4.3.6
 primp==0.12.1
