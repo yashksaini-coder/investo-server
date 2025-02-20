@@ -18,7 +18,6 @@ if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
     
 app = FastAPI()
-# Web searching agent
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -29,10 +28,14 @@ app.add_middleware(
 
 @app.get("/top-stocks")
 async def read_top_stocks():
-    top_stocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']
-    stock_info = get_top_stocks(top_stocks)
+    top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
+    stock = " ".join(top_stocks)
+    stock_info = get_top_stocks(stock)
     return stock_info
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Investo!"}
 
 @app.get("/chat")
 def chat(query: str):
