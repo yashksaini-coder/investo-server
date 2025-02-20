@@ -7,11 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from topStocks import get_top_stocks
 from agents import multi_ai
 from agno.agent import RunResponse
+import datetime
+import requests
 
-
-load_dotenv(dotenv_path=".env")
-GROQ_API_KEY = os.getenv("api_key")
-
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
@@ -34,8 +33,34 @@ async def read_top_stocks():
     return stock_info
 
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to Investo!"}
+async def read_root():
+    return {"message": "Welcome to the Investo-glow Backend API!"}
+
+
+@app.get("health/")  # Changed to GET since it's retrieving status
+async def health_check():
+    try:
+        return {
+            "status": "healthy",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "uptime": "OK",
+            "api": {
+                "groq_api": "connected" if GROQ_API_KEY else "not configured",
+            },
+            "ip": requests.client.host,
+            "services": {
+                "top_stocks": app.url_path_for("read_top_stocks"),
+                "chat": app.url_path_for("chat"),
+                "agent": app.url_path_for("ask"),
+            },
+        }
+
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "error": str(e)
+        }
 
 @app.get("/chat")
 def chat(query: str):
