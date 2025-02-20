@@ -33,6 +33,9 @@ async def read_top_stocks():
     stock_info = get_top_stocks(stock)
     return stock_info
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Investo!"}
 
 @app.get("/chat")
 def chat(query: str):
