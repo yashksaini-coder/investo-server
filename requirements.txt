@@ -62,3 +62,4 @@ watchfiles==1.0.4
 webencodings==0.5.1
 websockets==14.2
 yfinance==0.2.52
+pyfiglet==1.0.2
