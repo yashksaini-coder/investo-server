@@ -2,9 +2,9 @@ import groq
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=".env")
-GROQ_API_KEY = os.getenv("api_key")
+load_dotenv()
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 def chat(query: str):

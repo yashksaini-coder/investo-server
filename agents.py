@@ -9,9 +9,7 @@ from agno.tools.yfinance import YFinanceTools
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.agent import Agent, RunResponse
 
-load_dotenv(dotenv_path=".env")
-GROQ_API_KEY = os.getenv("api_key")
-
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
