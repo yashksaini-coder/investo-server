@@ -1,14 +1,23 @@
 # API imports
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import groq
 import os
 from dotenv import load_dotenv
+import datetime
+import requests
+
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from pyfiglet import Figlet, FigletFont
+
+# Custom imports
 from topStocks import get_top_stocks
 from agents import multi_ai
 from agno.agent import RunResponse
-import datetime
-import requests
+
+
+templates = Jinja2Templates(directory="templates")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
@@ -25,6 +34,12 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
+@app.get("/")
+async def read_root(request: Request):
+    text = "Investo-glow Backend API Server"
+    return templates.TemplateResponse("base.html",{"request":request, "text": text})
+
+
 @app.get("/top-stocks")
 async def read_top_stocks():
     top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
@@ -34,8 +49,8 @@ async def read_top_stocks():
 
 @app.get("/")
 async def read_root():
-    return {"message": "Welcome to the Investo-glow Backend API!"}
-
+    return {"Welcome to the Investo-glow Backend API!"}
+    return templates.TemplateResponse("home.html",{"request": request, "home_art": home_art})
 
 @app.get("health/")  # Changed to GET since it's retrieving status
 async def health_check():
