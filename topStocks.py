@@ -11,7 +11,8 @@ def get_top_stocks(symbols):
     try:
         top_stocks = symbols.split()
         tickers = yf.Tickers(symbols)
-        for stock in top_stocks:
+        while top_stocks:
+            stock = top_stocks.pop()
             info = tickers.tickers[stock].info
             stock_info = {
                     'symbol': stock,
@@ -20,7 +21,7 @@ def get_top_stocks(symbols):
                     'previousClose': info.get('previousClose', 'N/A'),
                     'sector': info.get('sector', 'N/A')
                     }
-            stock_data.append(stock_info)
+            stock_data.push(stock_info)
     except Exception as e:
             print(f"Error fetching {symbols}: {e}")
             time.sleep(5)
