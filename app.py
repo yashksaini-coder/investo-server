@@ -29,7 +29,7 @@ groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
-REDIS_URL = "rediss://default:AUWHAAIjcDFmNWVmMDU2OThiZWM0NzRiYWFlNTNmYmZiOWU4MjY4NHAxMA@usable-wren-17799.upstash.io:6379"
+REDIS_URL = os.getenv("REDIS_URL")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
