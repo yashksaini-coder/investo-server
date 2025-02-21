@@ -1,5 +1,5 @@
 # API imports
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 import groq
 import os
 from dotenv import load_dotenv
@@ -10,7 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pyfiglet import Figlet, FigletFont
-
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from contextlib import asynccontextmanager
+import json
+from redis import asyncio as aioredis
 # Custom imports
 from topStocks import get_top_stocks
 from agents import multi_ai
@@ -24,7 +28,31 @@ groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
-    
+
+REDIS_URL = os.getenv("REDIS_URL")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    redis_client = None  
+
+    try:
+        redis_client = aioredis.from_url(REDIS_URL, encoding="utf-8", decode_responses=True)
+        FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
+        print("✅ Redis cache initialized successfully!")
+        yield
+    except Exception as e:
+        print(f"❌ Redis Connection Error: {e}")
+        yield 
+    finally:
+        try:
+            await FastAPICache.clear()
+            if redis_client:
+                await redis_client.close()  
+                print("🔴 Redis connection closed!")
+        except Exception as e:
+            print(f"❌ Error while closing Redis: {e}")
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -35,16 +63,26 @@ app.add_middleware(
 )
 
 @app.get("/")
+@app.head("/")
 async def read_root(request: Request):
     text = "Investo-glow Backend API Server"
     return templates.TemplateResponse("base.html",{"request":request, "text": text})
 
+def get_cache():
+    return FastAPICache.get_backend()
 
 @app.get("/top-stocks")
-async def read_top_stocks():
+async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
+    cache_key = "top_stocks"
+    cached_result = await cache.get(cache_key)
+    if cached_result:
+        return json.loads(cached_result)
+
     top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
     stock = " ".join(top_stocks)
     stock_info = get_top_stocks(stock)
+
+    await cache.set(cache_key, json.dumps(stock_info), 5) 
     return stock_info
 
 @app.get("/")

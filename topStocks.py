@@ -21,8 +21,10 @@ def get_top_stocks(symbols):
                     'previousClose': info.get('previousClose', 'N/A'),
                     'sector': info.get('sector', 'N/A')
                     }
-            stock_data.push(stock_info)
+            
+            stock_data.append(stock_info)
+        print("✅ Data fetching done successfully!")
     except Exception as e:
-            print(f"Error fetching {symbols}: {e}")
+            print(f"❌ Error fetching {symbols}: {e}")
             time.sleep(5)
     return stock_data
