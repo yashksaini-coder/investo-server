@@ -87,7 +87,7 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
     await cache.set(cache_key, json.dumps(stock_info), 5) 
     return stock_info
 
-@app.get("health/")  # Changed to GET since it's retrieving status
+@app.get("/health")  # Changed to GET since it's retrieving status
 async def health_check():
     try:
         return {
@@ -96,8 +96,9 @@ async def health_check():
             "uptime": "OK",
             "api": {
                 "groq_api": "connected" if GROQ_API_KEY else "not configured",
+                "redis_cache": "connected" if REDIS_URL else "not configured",
             },
-            "ip": requests.client.host,
+            "ip": requests.get('https://api.ipify.org').text,
             "services": {
                 "top_stocks": app.url_path_for("read_top_stocks"),
                 "chat": app.url_path_for("chat"),
@@ -117,7 +118,7 @@ def chat(query: str):
     """
     API endpoint to handle user investment-related questions and return AI-generated insights.
     """
-    
+
     try:
         answer = groq_chat(query)
         return answer
