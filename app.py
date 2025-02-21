@@ -28,6 +28,7 @@ groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
+
 REDIS_URL = os.getenv("REDIS_URL")
 
 @asynccontextmanager
