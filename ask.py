@@ -7,17 +7,14 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
-def chat(query: str):
-    """
-    API endpoint to handle user investment-related questions and return AI-generated insights.
-    """
+def groq_chat(query: str):
     if not query:
         return {"error": "Query parameter is required"}
     
     try:
         response = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile", 
-            messages=[{"role": "system", "content": "You are an AI investment assistant."},
+            messages=[{"role": "system", "content": "You are an AI investment assistant. You are here to help users with investment-related questions."},
                       {"role": "user", "content": query}]
         )
         
