@@ -2,26 +2,36 @@
 from fastapi import FastAPI, Request, Depends
 import groq
 import os
-from dotenv import load_dotenv
+import dotenv
 import datetime
 import requests
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+<<<<<<< HEAD
 # from pyfiglet import Figlet, FigletFont
+=======
+>>>>>>> 32f82fe1110e21756cef29243db3a36132ee4ca0
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from contextlib import asynccontextmanager
 import json
 from redis import asyncio as aioredis
+
 # Custom imports
 from topStocks import get_top_stocks
+<<<<<<< HEAD
 from stockNews import fetch_news
 # from agents import multi_ai
 # from agno.agent import RunResponse
+=======
+from ask import groq_chat
+from agents import multi_ai
+from agno.agent import RunResponse
+>>>>>>> 32f82fe1110e21756cef29243db3a36132ee4ca0
 
-
+dotenv.load_dotenv()
 templates = Jinja2Templates(directory="templates")
 
 # GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -53,7 +63,12 @@ async def lifespan(_: FastAPI):
             print(f"❌ Error while closing Redis: {e}")
 
 
+<<<<<<< HEAD
 app = FastAPI(lifespan=lifespan)
+=======
+app = FastAPI(lifespan=lifespan)  # Pass the lifespan context manager to FastAPI
+
+>>>>>>> 32f82fe1110e21756cef29243db3a36132ee4ca0
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -98,6 +113,7 @@ async def stock_news(cache: RedisBackend = Depends(get_cache)):
 #     return {"Welcome to the Investo-glow Backend API!"}
 #     return templates.TemplateResponse("home.html",{"request": request, "home_art": home_art})
 
+<<<<<<< HEAD
 # @app.get("health/")  # Changed to GET since it's retrieving status
 # async def health_check():
 #     try:
@@ -140,6 +156,43 @@ async def stock_news(cache: RedisBackend = Depends(get_cache)):
         
 #         answer = response.choices[0].message.content
 #         return {"question": query, "answer": answer}
+=======
+@app.get("/health")  # Changed to GET since it's retrieving status
+async def health_check():
+    try:
+        return {
+            "status": "healthy",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "uptime": "OK",
+            "api": {
+                "groq_api": "connected" if GROQ_API_KEY else "not configured",
+                "redis_cache": "connected" if REDIS_URL else "not configured",
+            },
+            "ip": requests.get('https://api.ipify.org').text,
+            "services": {
+                "top_stocks": app.url_path_for("read_top_stocks"),
+                "chat": app.url_path_for("chat"),
+                "agent": app.url_path_for("ask"),
+            },
+        }
+
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "error": str(e)
+        }
+
+@app.get("/chat")
+def chat(query: str):
+    """
+    API endpoint to handle user investment-related questions and return AI-generated insights.
+    """
+
+    try:
+        answer = groq_chat(query)
+        return answer
+>>>>>>> 32f82fe1110e21756cef29243db3a36132ee4ca0
     
 #     except Exception as e:
 #         return {"error": str(e)}
