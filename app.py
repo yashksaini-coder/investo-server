@@ -9,7 +9,6 @@ import requests
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pyfiglet import Figlet, FigletFont
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from contextlib import asynccontextmanager
@@ -17,11 +16,12 @@ import json
 from redis import asyncio as aioredis
 # Custom imports
 from topStocks import get_top_stocks
+from ask import groq_chat
 from stockNews import fetch_news
 from agents import multi_ai
 from agno.agent import RunResponse
 
-
+dotenv.load_dotenv()
 templates = Jinja2Templates(directory="templates")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -106,7 +106,7 @@ async def health_check():
             "api": {
                 "groq_api": "connected" if GROQ_API_KEY else "not configured",
             },
-            "ip": requests.client.host,
+            "ip": requests.get('https://api.ipify.org').text,
             "services": {
                 "top_stocks": app.url_path_for("read_top_stocks"),
                 "chat": app.url_path_for("chat"),
