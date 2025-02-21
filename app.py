@@ -2,25 +2,25 @@
 from fastapi import FastAPI, Request, Depends
 import groq
 import os
-from dotenv import load_dotenv
+import dotenv
 import datetime
 import requests
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pyfiglet import Figlet, FigletFont
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from contextlib import asynccontextmanager
 import json
 from redis import asyncio as aioredis
+
 # Custom imports
 from topStocks import get_top_stocks
 from agents import multi_ai
 from agno.agent import RunResponse
 
-
+dotenv.load_dotenv()
 templates = Jinja2Templates(directory="templates")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -84,11 +84,6 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
 
     await cache.set(cache_key, json.dumps(stock_info), 5) 
     return stock_info
-
-@app.get("/")
-async def read_root():
-    return {"Welcome to the Investo-glow Backend API!"}
-    return templates.TemplateResponse("home.html",{"request": request, "home_art": home_art})
 
 @app.get("health/")  # Changed to GET since it's retrieving status
 async def health_check():

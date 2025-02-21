@@ -2,6 +2,7 @@ agno==1.1.1
 annotated-types==0.7.0
 anyio==4.8.0
 beautifulsoup4==4.13.3
+blinker==1.9.0
 certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
@@ -12,7 +13,9 @@ docstring_parser==0.16
 duckduckgo_search==7.3.2
 email_validator==2.2.0
 fastapi==0.115.8
+fastapi-cache2==0.2.2
 fastapi-cli==0.0.7
+Flask==3.1.0
 frozendict==2.4.6
 gitdb==4.0.12
 GitPython==3.1.44
@@ -23,15 +26,17 @@ httpcore==1.0.7
 httptools==0.6.4
 httpx==0.28.1
 idna==3.10
+itsdangerous==2.2.0
 Jinja2==3.1.5
 lxml==5.3.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
 multitasking==0.0.11
-numpy>=1.22.4
-pandas>=2.2.3
+numpy==2.2.3
+pandas==2.2.3
 peewee==3.17.9
+pendulum==3.0.0
 platformdirs==4.3.6
 primp==0.12.1
 pydantic==2.10.6
@@ -52,6 +57,7 @@ smmap==5.0.2
 sniffio==1.3.1
 soupsieve==2.6
 starlette==0.45.3
+time-machine==2.16.0
 tomli==2.2.1
 typer==0.15.1
 typing_extensions==4.12.2
@@ -61,5 +67,5 @@ uvicorn==0.34.0
 watchfiles==1.0.4
 webencodings==0.5.1
 websockets==14.2
+Werkzeug==3.1.3
 yfinance==0.2.52
-pyfiglet==1.0.2
