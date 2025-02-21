@@ -23,4 +23,8 @@ This repo is the Backend Server for the **[Investo-glow](https://github.com/yash
         <td><img src="https://skillicons.dev/icons?i=docker" height=24 width=24></td>
         <td>Docker is a set of platform as a service products that use OS-level virtualization to deliver software in packages called containers</td>
     </tr>
+    <tr>
+        <td><img src="https://skillicons.dev/icons?i=redis" height=24 width=24></td>
+        <td>Redis is a free, open-source, in-memory database that stores data as key-value pairs. It's often used as a cache, message broker, or database for quick responses.</td>
+    </tr>
 </table>
