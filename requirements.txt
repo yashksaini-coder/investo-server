@@ -12,7 +12,7 @@ dnspython==2.7.0
 docstring_parser==0.16
 duckduckgo_search==7.3.2
 email_validator==2.2.0
-fastapi==0.115.8
+fastapi
 fastapi-cache2==0.2.2
 fastapi-cli==0.0.7
 Flask==3.1.0

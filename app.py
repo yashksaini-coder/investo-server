@@ -84,7 +84,7 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
     stock = " ".join(top_stocks)
     stock_info = get_top_stocks(stock)
 
-    await cache.set(cache_key, json.dumps(stock_info), 5) 
+    await cache.set(cache_key, json.dumps(stock_info), 10) 
     return stock_info
 
 @app.get("/health")  # Changed to GET since it's retrieving status
