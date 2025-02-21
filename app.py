@@ -14,10 +14,10 @@ from fastapi_cache.backends.redis import RedisBackend
 from contextlib import asynccontextmanager
 import json
 from redis import asyncio as aioredis
-
 # Custom imports
 from topStocks import get_top_stocks
 from ask import groq_chat
+from stockNews import fetch_news
 from agents import multi_ai
 from agno.agent import RunResponse
 
@@ -29,7 +29,6 @@ groq_client = groq.Client(api_key=GROQ_API_KEY)
 
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
-
 REDIS_URL = os.getenv("REDIS_URL")
 
 @asynccontextmanager
@@ -54,8 +53,7 @@ async def lifespan(_: FastAPI):
             print(f"❌ Error while closing Redis: {e}")
 
 
-app = FastAPI(lifespan=lifespan)  # Pass the lifespan context manager to FastAPI
-
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -87,7 +85,18 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
     await cache.set(cache_key, json.dumps(stock_info), 10) 
     return stock_info
 
-@app.get("/health")  # Changed to GET since it's retrieving status
+@app.get("/stock-news")
+async def stock_news(cache: RedisBackend = Depends(get_cache)):
+    cache_key = "stock_news"
+    cached_result = await cache.get(cache_key)
+    if cached_result:
+        return json.loads(cached_result)
+    news_stack = fetch_news()
+    await cache.set(cache_key, json.dumps(news_stack), 300) 
+    return news_stack
+
+
+@app.get("health/")  # Changed to GET since it's retrieving status
 async def health_check():
     try:
         return {
@@ -96,7 +105,6 @@ async def health_check():
             "uptime": "OK",
             "api": {
                 "groq_api": "connected" if GROQ_API_KEY else "not configured",
-                "redis_cache": "connected" if REDIS_URL else "not configured",
             },
             "ip": requests.get('https://api.ipify.org').text,
             "services": {
@@ -118,10 +126,18 @@ def chat(query: str):
     """
     API endpoint to handle user investment-related questions and return AI-generated insights.
     """
-
+    if not query:
+        return {"error": "Query parameter is required"}
+    
     try:
-        answer = groq_chat(query)
-        return answer
+        response = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile", 
+            messages=[{"role": "system", "content": "You are an AI investment assistant."},
+                      {"role": "user", "content": query}]
+        )
+        
+        answer = response.choices[0].message.content
+        return {"question": query, "answer": answer}
     
     except Exception as e:
         return {"error": str(e)}
