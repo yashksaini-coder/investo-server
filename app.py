@@ -17,6 +17,7 @@ from redis import asyncio as aioredis
 
 # Custom imports
 from topStocks import get_top_stocks
+from ask import groq_chat
 from agents import multi_ai
 from agno.agent import RunResponse
 
@@ -53,7 +54,8 @@ async def lifespan(_: FastAPI):
             print(f"❌ Error while closing Redis: {e}")
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)  # Pass the lifespan context manager to FastAPI
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -115,18 +117,10 @@ def chat(query: str):
     """
     API endpoint to handle user investment-related questions and return AI-generated insights.
     """
-    if not query:
-        return {"error": "Query parameter is required"}
     
     try:
-        response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile", 
-            messages=[{"role": "system", "content": "You are an AI investment assistant."},
-                      {"role": "user", "content": query}]
-        )
-        
-        answer = response.choices[0].message.content
-        return {"question": query, "answer": answer}
+        answer = groq_chat(query)
+        return answer
     
     except Exception as e:
         return {"error": str(e)}
