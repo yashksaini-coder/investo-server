@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 import json
 from redis import asyncio as aioredis
 # Custom imports
-from topStocks import get_top_stocks
+from topStocks import get_top_stocks, get_stock
 from ask import groq_chat
 from stockNews import fetch_news
 from agents import multi_ai
@@ -79,11 +79,11 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
         return json.loads(cached_result)
 
     top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
-    stock = " ".join(top_stocks)
-    stock_info = get_top_stocks(stock)
+    stocks = " ".join(top_stocks)
+    stocks_info = get_top_stocks(stocks)
 
-    await cache.set(cache_key, json.dumps(stock_info), 10) 
-    return stock_info
+    await cache.set(cache_key, json.dumps(stocks_info), 10) 
+    return stocks_info
 
 @app.get("/stock-news")
 async def stock_news(cache: RedisBackend = Depends(get_cache)):
@@ -94,6 +94,16 @@ async def stock_news(cache: RedisBackend = Depends(get_cache)):
     news_stack = fetch_news()
     await cache.set(cache_key, json.dumps(news_stack), 300) 
     return news_stack
+
+@app.get("/stocks/{name}")
+async def read_stock(name: str, cache: RedisBackend = Depends(get_cache)):
+    cache_key = "stock_{name}"
+    cached_result = await cache.get(cache_key)
+    if cached_result:
+        return json.loads(cached_result)
+    stock_info = get_stock(name)
+    await cache.set(cache_key, json.dumps(stock_info), 10)
+    return stock_info
 
 
 @app.get("health/")  # Changed to GET since it's retrieving status

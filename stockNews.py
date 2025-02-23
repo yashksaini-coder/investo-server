@@ -10,7 +10,7 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 if not NEWS_API_KEY:
     raise ValueError("Please provide a NEWS API key")
-    
+
 session = requests.Session()
 session.headers.update({
     "User-Agent": "Chrome/122.0.0.0"
