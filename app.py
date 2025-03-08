@@ -1,57 +1,8 @@
-# API imports
 from fastapi import FastAPI, Request, Depends
-import groq
-import os
-import dotenv
-import datetime
-import requests
-
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from contextlib import asynccontextmanager
-import json
-from redis import asyncio as aioredis
-# Custom imports
-from topStocks import get_top_stocks, get_stock
-from ask import groq_chat
-from stockNews import fetch_news
-from agents import multi_ai
-from agno.agent import RunResponse
-
-dotenv.load_dotenv()
-templates = Jinja2Templates(directory="templates")
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-groq_client = groq.Client(api_key=GROQ_API_KEY)
-
-if not GROQ_API_KEY:
-    raise ValueError("Please provide a GROQ API key")
-REDIS_URL = os.getenv("REDIS_URL")
-
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    redis_client = None  
-
-    try:
-        redis_client = aioredis.from_url(REDIS_URL, encoding="utf-8", decode_responses=True)
-        FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
-        print("✅ Redis cache initialized successfully!")
-        yield
-    except Exception as e:
-        print(f"❌ Redis Connection Error: {e}")
-        yield 
-    finally:
-        try:
-            await FastAPICache.clear()
-            if redis_client:
-                await redis_client.close()  
-                print("🔴 Redis connection closed!")
-        except Exception as e:
-            print(f"❌ Error while closing Redis: {e}")
-
+from utils.redisCache import lifespan, get_cache
+from routes.stockRoutes import router as stock_router
+from routes.agentRoutes import router as agent_router
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
@@ -62,110 +13,8 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
-@app.get("/")
-@app.head("/")
-async def read_root(request: Request):
-    text = "Investo-glow Backend API Server"
-    return templates.TemplateResponse("base.html",{"request":request, "text": text})
-
-def get_cache():
-    return FastAPICache.get_backend()
-
-@app.get("/top-stocks")
-async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
-    cache_key = "top_stocks"
-    cached_result = await cache.get(cache_key)
-    if cached_result:
-        return json.loads(cached_result)
-
-    top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
-    stocks = " ".join(top_stocks)
-    stocks_info = get_top_stocks(stocks)
-
-    await cache.set(cache_key, json.dumps(stocks_info), 10) 
-    return stocks_info
-
-@app.get("/stock-news")
-async def stock_news(cache: RedisBackend = Depends(get_cache)):
-    cache_key = "stock_news"
-    cached_result = await cache.get(cache_key)
-    if cached_result:
-        return json.loads(cached_result)
-    news_stack = fetch_news()
-    await cache.set(cache_key, json.dumps(news_stack), 300) 
-    return news_stack
-
-@app.get("/stocks/{name}")
-async def read_stock(name: str, cache: RedisBackend = Depends(get_cache)):
-    cache_key = "stock_{name}"
-    cached_result = await cache.get(cache_key)
-    if cached_result:
-        return json.loads(cached_result)
-    stock_info = get_stock(name)
-    await cache.set(cache_key, json.dumps(stock_info), 10)
-    return stock_info
+app.include_router(stock_router)
+app.include_router(agent_router)
 
 
-@app.get("health/")  # Changed to GET since it's retrieving status
-async def health_check():
-    try:
-        return {
-            "status": "healthy",
-            "timestamp": datetime.datetime.now().isoformat(),
-            "uptime": "OK",
-            "api": {
-                "groq_api": "connected" if GROQ_API_KEY else "not configured",
-            },
-            "ip": requests.get('https://api.ipify.org').text,
-            "services": {
-                "top_stocks": app.url_path_for("read_top_stocks"),
-                "chat": app.url_path_for("chat"),
-                "agent": app.url_path_for("ask"),
-            },
-        }
 
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "timestamp": datetime.datetime.now().isoformat(),
-            "error": str(e)
-        }
-
-@app.get("/chat")
-def chat(query: str):
-    """
-    API endpoint to handle user investment-related questions and return AI-generated insights.
-    """
-    if not query:
-        return {"error": "Query parameter is required"}
-    
-    try:
-        response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile", 
-            messages=[{"role": "system", "content": "You are an AI investment assistant."},
-                      {"role": "user", "content": query}]
-        )
-        
-        answer = response.choices[0].message.content
-        return {"question": query, "answer": answer}
-    
-    except Exception as e:
-        return {"error": str(e)}
-
-
-@app.get("/agent")
-def ask(query: str):
-    """
-    API endpoint to handle user investment-related questions and return AI-generated insights.
-    """
-    if not query:
-        return {"error": "Query parameter is required"}
-    
-    try:
-        response: RunResponse = multi_ai.run(query)
-        answer = response.content
-
-        return {"question": query, "answer": answer}
-    
-    except Exception as e:
-        return {"error": str(e)}
