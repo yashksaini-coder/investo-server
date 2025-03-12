@@ -20,7 +20,7 @@ groq_client = groq.Client(api_key=GROQ_API_KEY)
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
 
-@router.get("health/")  # Changed to GET since it's retrieving status
+@router.get("/health")  # Changed to GET since it's retrieving status
 async def health_check():
     try:
         return {
@@ -32,7 +32,6 @@ async def health_check():
             },
             "ip": requests.get('https://api.ipify.org').text,
             "services": {
-                "top_stocks": router.url_path_for("read_top_stocks"),
                 "chat": router.url_path_for("chat"),
                 "agent": router.url_path_for("ask"),
             },
