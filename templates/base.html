@@ -109,6 +109,12 @@
             text-shadow: var(--terminal-glow);
         }
 
+        .description {
+            color: var(--terminal-color);
+            text-shadow: var(--terminal-glow);
+            font-size: 14px;
+        }
+
         .terminal-item {
             display: flex;
             align-items: center;
@@ -192,7 +198,10 @@
             <span>$ {{text}}</span><span class="cursor"></span>
         </div>
         {% endblock %}
-        
+        <div class="description">
+            <p>The objective is to provide a clean and proper structure of all API endpoints and how they operate using query params.</p>
+            <p>The API end points will be shown with proper request methods</p>
+        </div>
         <ul class="terminal-menu">
             <li class="terminal-item">
                 <span class="terminal-prompt">></span>
@@ -212,7 +221,7 @@
             </li>
             <li class="terminal-item">
                 <span class="terminal-prompt">></span>
-                <a class="terminal-link" href="/stocks/" target="_blank">/stocks</a>
+                <a class="terminal-link" href="/stock/" target="_blank">/stock</a>
             </li>
             <li class="terminal-item">
                 <span class="terminal-prompt">></span>
