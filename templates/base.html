@@ -8,8 +8,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --terminal-color: #0cfa37;
+            --terminal-bg: #000000;
+            --terminal-glow: 0 0 5px rgba(12, 250, 55, 0.5);
+        }
+        
         html {
-            background-color: black;
+            background-color: var(--terminal-bg);
             font-family: 'JetBrains Mono', monospace;
             box-sizing: border-box;
             font-size: 8px;
@@ -17,63 +23,160 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+            pointer-events: none;
+            z-index: 11;
         }
 
         *, *:before, *:after {
             box-sizing: inherit;
         }
 
-        pre{
-            color: rgb(41, 199, 162);
+        pre {
+            color: var(--terminal-color);
+            text-shadow: var(--terminal-glow);
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
         }
 
-        main, h1, h2, h3, h4, h5, h6, p, ol, ul {
+        main {
             font-size: 18px;
             font-weight: normal;
-            color: white;
-            margin-bottom: 80px;
+            color: var(--terminal-color);
+            margin-left: 16px;
+            text-shadow: var(--terminal-glow);
+            position: relative;
+            z-index: 2;
         }
 
-        footer{
-            margin-top: 30px;
+        ul {
+            margin: 20px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+        
+        a {
+            text-decoration: none;
+            color: var(--terminal-color);
+            text-shadow: var(--terminal-glow);
+        }
+
+        .terminal-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 6px;
-            
+            transition: all 0.3s ease;
+        }
+        
+        .terminal-item:hover {
+            transform: translateX(10px);
+        }
+        
+        .terminal-prompt {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .terminal-link {
+            padding: 5px 0;
+            font-size: 16px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .terminal-link:hover {
+            background-color: var(--terminal-color);
+            color: var(--terminal-bg);
+            text-shadow: none;
+            padding: 5px 10px;
+            margin-left: -10px;
+        }
+        
+        footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--terminal-color);
+            font-size: 12px;
+            color: var(--terminal-color);
+            text-shadow: var(--terminal-glow);
+            text-align: center;
+            position: relative;
+            z-index: 2;
         }
 
-        .blinking_bar {
-            font-size: 2px;
-            color: white;
-            background-color: black;
-            padding: 3px;
-            border: 2px solid white;
-            animation: blink 1s infinite;
-            width: 2px;
+        .cursor {
+            display: inline-block;
+            width: 8px;
             height: 15px;
+            background-color: var(--terminal-color);
+            margin-left: 5px;
+            animation: blink 1s infinite;
         }
 
         @keyframes blink {
-            0% {
-                background-color: black;
-                color: white;
-            }
-            50% {
-                background-color: white;
-                color: black;
-            }
-            100% {
-                background-color: black;
-                color: white;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
-
+        
+        .welcome-text {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
     </style>
     {% block title %}
     {% endblock %}
 </head>
-<pre>
+<body>
+    <pre>
     {% block header %}
     ██╗███╗   ██╗██╗   ██╗███████╗███████╗████████╗ ██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
     ██║████╗  ██║██║   ██║██╔════╝██╔════╝╚══██╔══╝██╔═══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
@@ -83,16 +186,42 @@
     ╚═╝╚═╝  ╚═══╝  ╚═══╝  ╚══════╝╚══════╝   ╚═╝    ╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝
     {% endblock %}
     </pre>
-<body>
     <main>
         {% block content %}
-        <div style="display: flex; align-items: center;">
-            <div class="blinking_bar" style="margin-right: 8px;"></div> {{text}}
+        <div class="welcome-text">
+            <span>$ {{text}}</span><span class="cursor"></span>
         </div>
         {% endblock %}
+        
+        <ul class="terminal-menu">
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/chat" target="_blank">/chat</a>
+            </li>
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/agent" target="_blank">/agent</a>
+            </li>
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/top-stocks" target="_blank">/top-stocks</a>
+            </li>
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/stock-news" target="_blank">/stock-news</a>
+            </li>
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/stocks/" target="_blank">/stocks</a>
+            </li>
+            <li class="terminal-item">
+                <span class="terminal-prompt">></span>
+                <a class="terminal-link" href="/stock-analysis/" target="_blank">/stock-analysis</a>
+            </li>
+        </ul>
     </main>
-    <!-- <footer>
-        <p>Investo &copy; 2021</p>
-    </footer> -->
+    <footer>
+        <div>[ SYSTEM ] © 2021-2024 Investo Terminal v1.0.4 | All Rights Reserved</div>
+    </footer>
 </body>
 </html>

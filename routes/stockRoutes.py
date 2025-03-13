@@ -15,6 +15,13 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
 
+@router.get("/")
+@router.head("/")
+async def read_root(request: Request):
+    text = "Investo-glow Backend API Server"
+    return templates.TemplateResponse("base.html",{"request":request, "text": text})
+
+
 @router.get("/top-stocks")
 async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
     cache_key = "top_stocks"
@@ -22,7 +29,7 @@ async def read_top_stocks(cache: RedisBackend = Depends(get_cache)):
     if cached_result:
         return json.loads(cached_result)
 
-    top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
+    top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'META', 'NVDA']
     stocks = " ".join(top_stocks)
     stocks_info = get_top_stocks(stocks)
 
@@ -49,12 +56,6 @@ async def read_stock(name: str, cache: RedisBackend = Depends(get_cache)):
     stock_info = get_stock(name)
     await cache.set(cache_key, json.dumps(stock_info), 10)
     return stock_info
-
-@router.get("/")
-@router.head("/")
-async def read_root(request: Request):
-    text = "Investo-glow Backend API Server"
-    return templates.TemplateResponse("base.html",{"request":request, "text": text})
 
 
 
