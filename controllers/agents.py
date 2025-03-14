@@ -28,10 +28,9 @@ web_search_agent = Agent(
         "You are a very professional web search AI agent",
         "your job is to search the web for information based on the user given input",
         "provide exact information to the user available on the web",
-    ],
-    structured_outputs=False,
-    markdown=True,
+    ]
 )
+
 financial_agent = Agent(
     name="financial_agent",
     role="get financial information",
@@ -52,9 +51,7 @@ financial_agent = Agent(
         "your job is to provide financial information to users",
         "you can provide stock price, analyst recommendations, and stock fundamentals",
         "you can also provide information about companies, industries, and financial terms",
-    ],
-    structured_outputs=False,
-    markdown=True,
+    ]
 )
 
 multi_ai = Agent(

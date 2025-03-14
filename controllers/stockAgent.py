@@ -24,7 +24,7 @@ detailed_instructions = [
     """{
         "symbol": "TICKER",
         "company_name": "Full Company Name",
-        "current_price": 123.45,
+        "current_price": price or NA,
         "market_cap": 1234567890,
         "financial_ratios": {
             "pe_ratio": 15.6,
@@ -55,7 +55,7 @@ detailed_instructions = [
 
 # Initialize the agent with YFinance tools
 stock_analyzer_agent = Agent(
-    model=Gemini(id="gemini-1.5-flash-8b", api_key=GEMINI_API_KEY),
+    model=Gemini(id="gemini-2.0-flash", api_key=GEMINI_API_KEY),
     markdown=True,
     tools=[YFinanceTools(
         stock_price=True,
