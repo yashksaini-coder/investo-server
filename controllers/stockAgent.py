@@ -24,7 +24,7 @@ detailed_instructions = [
     """{
         "symbol": "TICKER",
         "company_name": "Full Company Name",
-        "current_price": price or NA,
+        "current_price": stock_price,
         "market_cap": 1234567890,
         "financial_ratios": {
             "pe_ratio": 15.6,
