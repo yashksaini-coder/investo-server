@@ -18,6 +18,8 @@ templates = Jinja2Templates(directory="templates")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = groq.Client(api_key=GROQ_API_KEY)
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 if not GROQ_API_KEY:
     raise ValueError("Please provide a GROQ API key")
 
@@ -31,6 +33,7 @@ async def health_check(request: Request):
             "uptime": "OK",
             "api": {
                 "groq_api": "connected" if GROQ_API_KEY else "not configured",
+                "gemini_api": "connected" if GEMINI_API_KEY else "not configured",
             },
             "ip": requests.get('https://api.ipify.org').text,
             "services": {
