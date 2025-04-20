@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from utils.redisCache import get_cache
-from controllers.topStocks import get_top_stocks, get_stock
+from controllers.topStocks import get_stock, get_top_stock_info
 from controllers.stockNews import fetch_news
 from controllers.stockAgent import stock_analyzer_agent, extract_json_from_response, create_default_stock_data, merge_stock_data
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -31,9 +31,7 @@ async def read_top_stocks(request: Request, cache: RedisBackend = Depends(get_ca
     if cached_result:
         result = json.loads(cached_result)
     else:
-        top_stocks = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'META', 'NVDA']
-        stocks = " ".join(top_stocks)
-        result = get_top_stocks(stocks)
+        result = get_top_stock_info()
         await cache.set(cache_key, json.dumps(result), 10)
     
     # Check if request is from a browser
@@ -79,16 +77,16 @@ async def stock_news(request: Request, cache: RedisBackend = Depends(get_cache))
     
     return result
 
-@router.get("/stock/{name}")
-async def read_stock(request: Request, name: str, cache: RedisBackend = Depends(get_cache)):
-    # Use f-string to properly interpolate the name variable
-    cache_key = f"stock_{name}"
+@router.get("/stock/{symbol}")
+async def read_stock(request: Request, symbol: str, cache: RedisBackend = Depends(get_cache)):
+    # Use f-string to properly interpolate the symbol variable
+    cache_key = f"stock_{symbol}"
     cached_result = await cache.get(cache_key)
     
     if cached_result:
         result = json.loads(cached_result)
     else:
-        result = get_stock(name)
+        result = get_stock(symbol)
         await cache.set(cache_key, json.dumps(result), 10)
     
     # Check if request is from a browser
@@ -96,12 +94,12 @@ async def read_stock(request: Request, name: str, cache: RedisBackend = Depends(
     if "text/html" in accept_header:
         return templates.TemplateResponse("route.html", {
             "request": request,
-            "route_path": f"/stock/{{{name}}}",
+            "route_path": f"/stock/{{{symbol}}}",
             "method": "GET",
-            "full_path": request.url.scheme + "://" + request.url.netloc + f"/stock/{name}",
+            "full_path": request.url.scheme + "://" + request.url.netloc + f"/stock/{symbol}",
             "description": "Returns detailed information about a specific stock",
             "parameters": [
-                {"name": "name", "type": "string", "description": "Stock symbol (e.g., AAPL, MSFT)"}
+                {"name": "symbol", "type": "string", "description": "Stock symbol (e.g., AAPL, MSFT)"}
             ],
             "example_response": json.dumps(result, indent=2),
             "current_year": datetime.datetime.now().year
