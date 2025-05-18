@@ -15,6 +15,3 @@ app.add_middleware(
 
 app.include_router(stock_router)
 app.include_router(agent_router)
-
-
-

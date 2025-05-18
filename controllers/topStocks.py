@@ -21,7 +21,7 @@ def get_top_stock_info():
         for ticker in tickers_list:
             try:
                 close_prices = data[ticker]['Close']
-                percent_change = ((close_prices[-1] - close_prices[-2]) / close_prices[-2]) * 100
+                percent_change = ((close_prices.iloc[-1] - close_prices.iloc[-2]) / close_prices.iloc[-2]) * 100
                 changes.append((ticker, round(percent_change, 2)))
             except Exception:
                 continue
