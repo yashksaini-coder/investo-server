@@ -1,4 +1,4 @@
-![Docker Image Name](https://img.shields.io/badge/yashksaini19-investo_agno_server-blue)
+[![Badge](https://img.shields.io/badge/yashksaini19-investo_agno_server-blue)](https://hub.docker.com/r/yashksaini19/investo-agno-server)
 ![Docker Image Version (tag)](https://img.shields.io/docker/v/yashksaini19/investo-agno-server/latest)
 ![Docker Image Size](https://img.shields.io/docker/image-size/yashksaini19/investo-agno-server)
 
