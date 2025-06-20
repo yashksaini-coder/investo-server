@@ -1,4 +1,6 @@
-[![Keep Backend Active](https://github.com/yashksaini-coder/investo-server/actions/workflows/ping.yml/badge.svg)](https://github.com/yashksaini-coder/investo-server/actions/workflows/ping.yml)
+![Docker Image Name](https://img.shields.io/badge/yashksaini19-investo_agno_server-blue)
+![Docker Image Version (tag)](https://img.shields.io/docker/v/yashksaini19/investo-agno-server/latest)
+![Docker Image Size](https://img.shields.io/docker/image-size/yashksaini19/investo-agno-server)
 
 This repo is the Backend Server for the **[Investo-glow](https://github.com/yashksaini-coder/investo-glow)** project. It is a REST API server built using FastAPI and Agno AI. It is hosted on Render. The server is responsible for handling all the requests from the frontend and processing them. It also interacts with the Agno AI to get the predictions for the stock prices.
 
@@ -30,8 +32,9 @@ This repo is the Backend Server for the **[Investo-glow](https://github.com/yash
 </table>
 
 ---
-<div align="center">
-    
+
+<h2>Developers</h2>
+<div align="center">    
 <table>
     <tbody>
         <tr>
