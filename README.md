@@ -49,7 +49,7 @@ This repo is the Backend Server for the **[Investo-glow](https://github.com/yash
                 </div>
             </td>
             <td align="center" width="33.33%">
-                <img src="https://media-hosting.imagekit.io//4cd2278a98dc48b7/avatartion.png?Expires=1834756133&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=C22MhmrFRMR7CvIFLEiKPJXpMajmfNCx1qck~A5IntB83b5frqFUZ0PazWm8sfdmG2BMTSL9QNzode5Wf2H3K9BP5UeSjrf23g5TBC7OD3LkBqWcgIAsAlvEzOhqaeUdYBxCLZxPdpyccoLUTA8VRU78YTd-qHiLc9jVyLuwY2jw6m6pSFQFv6BPe0Kc3CXzy4D9IF3ik9-8aLpMp6epx~ny18zfpjy1moYl1e4OQV8JC4A4L0Cn4qCyAPqtvYpZvYOLehrpnFp9VdOhdSK70TMg8SoxjQm4cXjnmQPZw-069tztsZucIlSEWDlMcByL0zDmAmigCMnxrLM3vGKUog__" width="130px;"/>
+                <img src="https://avatars.githubusercontent.com/u/74611061?v=4" width="130px;"/>
                 <br/>
                 <h4 align="center">
                     <b>Kushagra Singhal</b>
