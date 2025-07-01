@@ -10,7 +10,7 @@ This repo is the Backend Server for the **[Investo-glow](https://github.com/yash
 <table>
     <tr>
         <td><img src="https://skillicons.dev/icons?i=fastapi" height=24 width=24></td>
-        <td>FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.</td>
+        <td>FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.</td>a
     </tr>
     <tr>
         <td><img src="https://avatars.githubusercontent.com/u/104874993?s=24"></td>
